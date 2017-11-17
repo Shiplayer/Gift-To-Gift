@@ -1,6 +1,7 @@
 package ru.gifttogift.server;
 
 import ru.gifttogift.DataGift;
+import ru.gifttogift.Main;
 import ru.gifttogift.db.GiftDB;
 
 import javax.imageio.ImageIO;
@@ -113,6 +114,18 @@ public class ResponseToRequestHandler {
                 return null;
 
         }
+
+        public String nextAllString() {
+            StringBuilder stringBuilder = new StringBuilder();
+            String buf;
+            while((buf = nextString()) != null){
+                if(hasNext())
+                    stringBuilder = stringBuilder.append(buf).append(" ");
+                else
+                    stringBuilder = stringBuilder.append(buf);
+            }
+            return stringBuilder.toString();
+        }
     }
 
 
@@ -156,7 +169,7 @@ public class ResponseToRequestHandler {
                         if ((methods = requestHandler.nextString()).equals("get"))
                             message = new Message(methods, requestHandler.nextInt(), requestHandler.nextInt());
                         else if(methods.equals("getImage"))
-                            message = new Message(methods, requestHandler.nextString());
+                            message = new Message(methods, requestHandler.nextAllString());
 
                         //exchanger.exchange(message);
                         System.err.println("message is receiving");
@@ -173,11 +186,19 @@ public class ResponseToRequestHandler {
                             }
                             System.err.println("message is sending");
                         } else if(message.getText().equalsIgnoreCase("getImage")){
-                            System.out.println(message.path);
-                            BufferedImage image = ImageIO.read(new File(message.getPath()));
+                            System.out.println("message.getPath() = " + message.getPath());
+                            File file = new File(message.getPath());
+                            System.out.println("file.length() = " + file.length());
+                            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                            //outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(file.length()).array());
+                            BufferedImage image = ImageIO.read(file);
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            OutputStream outputStream = socket.getOutputStream();
-                            ImageIO.write(image, "jpg", outputStream);
+                            baos.reset();
+                            ImageIO.write(image, "jpg", baos);
+                            System.out.println(baos.size());
+                            outputStream.writeInt(baos.size());
+                            baos.writeTo(outputStream);
+                            //ImageIO.write(image, "jpg", outputStream);
                             /*byte[] bytes = new byte[fileInputStream.available()];
                             System.out.println(fileInputStream.available());
                             int count = fileInputStream.read(bytes);
@@ -194,6 +215,7 @@ public class ResponseToRequestHandler {
 
                 } catch (IOException e) {
                     System.out.println("exit");
+                    Main.logFile.write(e);
                     //e.printStackTrace();
                 }
             }
