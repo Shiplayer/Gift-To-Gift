@@ -85,6 +85,11 @@ public class ResponseToRequestHandler {
         public int getCount() {
             return count;
         }
+
+        @Override
+        public String toString() {
+            return text;
+        }
     }
 
     public class RequestHandler{
@@ -186,18 +191,24 @@ public class ResponseToRequestHandler {
                             }
                             System.err.println("message is sending");
                         } else if(message.getText().equalsIgnoreCase("getImage")){
-                            System.out.println("message.getPath() = " + message.getPath());
                             File file = new File(message.getPath());
-                            System.out.println("file.length() = " + file.length());
-                            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-                            //outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(file.length()).array());
-                            BufferedImage image = ImageIO.read(file);
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            baos.reset();
-                            ImageIO.write(image, "jpg", baos);
-                            System.out.println(baos.size());
-                            outputStream.writeInt(baos.size());
-                            baos.writeTo(outputStream);
+                            try {
+                                System.out.println(message.getPath());
+                                System.out.println("file.length() = " + file.length());
+                                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                                //outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(file.length()).array());
+                                BufferedImage image = ImageIO.read(file);
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                baos.reset();
+                                ImageIO.write(image, "jpg", baos);
+                                System.out.println(baos.size());
+                                outputStream.writeInt(baos.size());
+                                baos.writeTo(outputStream);
+
+                            } catch (IOException e){
+                                Main.logFile.writeInfo(file.getPath());
+                                Main.logFile.write(e);
+                            }
                             //ImageIO.write(image, "jpg", outputStream);
                             /*byte[] bytes = new byte[fileInputStream.available()];
                             System.out.println(fileInputStream.available());

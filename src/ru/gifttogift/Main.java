@@ -24,7 +24,6 @@ public class Main {
     public String url = "https://www.redcube.ru/";
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException {
-        //System.setProperty("javax.net.ssl.keyStore", "certificate/redcube.cer");
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
                     public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -48,7 +47,8 @@ public class Main {
 
     private void run(String[] args) throws IOException {
         System.out.println(args.length);
-        checkDatabase();
+        if(args.length != 0 && args[0].equalsIgnoreCase("-check"))
+            checkDatabase();
         try {
             System.out.println("SERVER START");
             ResponseToRequestHandler ss = new ResponseToRequestHandler();
