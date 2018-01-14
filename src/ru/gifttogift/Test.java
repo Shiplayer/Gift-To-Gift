@@ -13,6 +13,7 @@ import java.net.*;
 import java.nio.channels.SocketChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Test {
@@ -21,6 +22,17 @@ public class Test {
     }
 
     public void run() throws IOException, URISyntaxException, SQLException, ClassNotFoundException {
+
+        File file = new File("images");
+        if(file.exists()){
+            File[] dirs = file.listFiles();
+            StringBuilder stringBuilder = new StringBuilder();
+            assert dirs != null;
+            for(int n = 0; n < dirs.length; n++){
+                stringBuilder = stringBuilder.append(dirs[n].getName()).append(";");
+            }
+            System.out.println(stringBuilder.toString());
+        }
         String text = "getImage images\\Символы года 2018\\PP.DG.011.001978s340x508.jpg";
         Socket socket = new Socket("192.168.1.13", 44579);
         try(DataInputStream inputStream = new DataInputStream(socket.getInputStream());

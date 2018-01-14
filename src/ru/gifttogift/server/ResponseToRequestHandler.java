@@ -175,6 +175,8 @@ public class ResponseToRequestHandler {
                             message = new Message(methods, requestHandler.nextInt(), requestHandler.nextInt());
                         else if(methods.equals("getImage"))
                             message = new Message(methods, requestHandler.nextAllString());
+                        else if(methods.equals("getCategory"))
+                            message = new Message(methods);
 
                         //exchanger.exchange(message);
                         System.err.println("message is receiving");
@@ -221,6 +223,20 @@ public class ResponseToRequestHandler {
                             objectOutputStream.close();
                             fileInputStream.close();
                             */
+
+                            //TODO отправлять в виде JSON
+                        } else if(message.getText().equals("getCategory")){
+                            File file = new File("images");
+                            if(file.exists()){
+                                File[] dirs = file.listFiles();
+                                assert dirs != null;
+                                StringBuilder stringBuilder = new StringBuilder();
+                                for(int n = 0; n < dirs.length; n++){
+                                    stringBuilder = stringBuilder.append(dirs[n].getName()).append(";");
+                                }
+                                System.out.println(stringBuilder.toString());
+                                pw.println(stringBuilder.toString());
+                            }
                         }
                     }
 

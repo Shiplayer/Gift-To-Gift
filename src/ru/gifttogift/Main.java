@@ -42,6 +42,8 @@ public class Main {
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         logFile = new LogFile();
         //new Test().run();
+        GiftDB giftDB = new GiftDB();
+        System.out.println(giftDB.getGifts(0, 10));
         new Main().run(args);
     }
 
